@@ -14,22 +14,22 @@ struct Team: Identifiable {
     let section: String
     let competition: String
     let grade: String
-    let value: String
+    let teamID: String
 }
 
 struct TeamsView: View {
-    @State var myComp = competition
-    @State var myValue = value
+    @State var myComp = myCompID
+    @State var myValue = myTeamID
     
     
     let teams = [
-        Team(name: "Vic League 2", section: "Womens", competition: "14518", grade: "25985", value: "210764"),
-        Team(name: "Metro 1 East", section: "Womens", competition: "14518", grade: "26248", value: "216042"),
-        Team(name: "Vic League 2", section: "Mens", competition: "14518", grade: "25980", value: "210719"),
-        Team(name: "Vic League 2 Reserves", section: "Mens", competition: "14518", grade: "25981", value: "210728"),
-        Team(name: "Metro 1", section: "Mens", competition: "14518", grade: "26236", value: "216041"),
-        Team(name: "Over 45 B SE", section: "vets", competition: "14682", grade: "26168", value: "214605"),
-        Team(name: "Over 45 D East", section: "vets", competition: "14682", grade: "26171", value: "214624")]
+        Team(name: "Vic League 2", section: "Womens", competition: "14518", grade: "25985", teamID: "210764"),
+        Team(name: "Metro 1 East", section: "Womens", competition: "14518", grade: "26248", teamID: "216042"),
+        Team(name: "Vic League 2", section: "Mens", competition: "14518", grade: "25980", teamID: "210719"),
+        Team(name: "Vic League 2 Reserves", section: "Mens", competition: "14518", grade: "25981", teamID: "210728"),
+        Team(name: "Metro 1", section: "Mens", competition: "14518", grade: "26236", teamID: "216041"),
+        Team(name: "Over 45 B SE", section: "vets", competition: "14682", grade: "26168", teamID: "214605"),
+        Team(name: "Over 45 D East", section: "vets", competition: "14682", grade: "26171", teamID: "214624")]
     
     func groupBySection(_ teams: [Team]) -> [(String, [Team])] {
         let grouped = Dictionary(grouping: teams, by: { $0.section })
@@ -46,34 +46,44 @@ struct TeamsView: View {
                         ForEach(pair.1) {team in
                             HStack {
                                 
-                                if team.competition == myComp && team.value == myValue {
+                                if team.competition == myComp && team.teamID == myValue {
                                 Image(systemName: "checkmark")
                             }
                             Text(team.name)
                             }
                             .gesture(TapGesture(count: 2).onEnded({
-                                competition = team.competition
-                                value = team.value
-                                selTeam = team.name
-                                selSection = team.section.capitalized
-                                selGrade = team.grade
-                                myComp = competition
-                                myValue = value
+                                myCompID = team.competition
+                                myTeamID = team.teamID
+                                myGradeName = team.name
+                                myCompName = team.section.capitalized
+                                myGradeID = team.grade
+                                myComp = myCompID
+                                myValue = myTeamID
                             }))
                         }
                     }
                 }
             }
-            .listStyle(GroupedListStyle())
-            .navigationTitle("MHSOB Teams")
-            .navigationBarTitleDisplayMode(.inline)
-            .navigationBarTitleDisplayMode(.inline)
+            .listStyle(GroupedListStyle())    .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .principal) {
                     VStack {
-                        Text("Game Schedule").font(.headline)
+                        Text("MHSOBHC Teams").font(.headline)
                             .foregroundColor(Color("Gold"))
-                        Text(selSection + " : " + selTeam).font(.subheadline)
+                        Text(myCompName + " : " + myGradeName).font(.subheadline)
+                            .foregroundColor(Color("Gold"))
+                    }
+                }
+                ToolbarItem(placement: .navigationBarLeading) {
+                    Image("logo")
+                        .resizable()
+                        .frame(minWidth: 40, idealWidth: 40, maxWidth: 40, minHeight: 40, idealHeight: 40, maxHeight: 40, alignment: .center)
+                }
+                ToolbarItem(placement: .navigationBarTrailing) {
+                    Button {
+                        
+                    } label: {
+                        Image(systemName: "line.3.horizontal")
                             .foregroundColor(Color("Gold"))
                     }
                 }

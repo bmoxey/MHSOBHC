@@ -19,30 +19,55 @@ struct Game: Codable {
     var opponent: String
     var score: String
     var starts: String
+    var result: String
 }
 
 struct GamesView: View {
     @State private var games = [Game]()
-
+    
     var body: some View {
         NavigationStack {
             List(games, id: \.id) { item in
                 HStack {
                     Text(item.roundID)
-                        .frame(width: 32)
+                        .frame(width: 18)
                     Spacer()
                     VStack {
                         Text("\(item.opponent) @ \(item.venue)")
-                            .fontWeight(.heavy)
+                            .fontWeight(.bold)
                         Text("\(item.dateTime)")
+                            .font(.subheadline)
                         if item.starts != "" {
                             Text("\(item.starts)")
                                 .foregroundColor(Color.red)
                         }
                     }
                     Spacer()
-                    Text(item.score)
-                        .frame(width: 48)
+                    VStack {
+                        Text(item.score)
+                        if item.result == "Win" {
+                            Text("\(item.result)")
+                                .background(.green)
+                                .foregroundColor(.white)
+                                .fontWeight(.heavy)
+                        } else if item.result == "Loss" {
+                            Text("\(item.result)")
+                                .background(.red)
+                                .foregroundColor(.white)
+                                .fontWeight(.heavy)
+                        } else if item.result == "Draw" {
+                            Text("\(item.result)")
+                                .background(.gray)
+                                .foregroundColor(.white)
+                                .fontWeight(.heavy)
+                        } else  {
+                            Text("\(item.result)")
+                                .background(.cyan)
+                                .foregroundColor(.white)
+                                .fontWeight(.heavy)
+                        }
+                    }
+                    .frame(width: 48)
                 }
             }
             .background(Color("Green"))
@@ -51,14 +76,29 @@ struct GamesView: View {
             .task {
                 await loadData()
             }
-
             .navigationBarTitleDisplayMode(.inline)
+
             .toolbar {
                 ToolbarItem(placement: .principal) {
                     VStack {
-                        Text("Game Schedule").font(.headline)
+                        Text("Game Schedule")
                             .foregroundColor(Color("Gold"))
-                        Text(selSection + " : " + selTeam).font(.subheadline)
+                            .fontWeight(.bold)
+                        Text("\(myCompName) - \(myGradeName)")
+                            .foregroundColor(Color("Gold"))
+                            .font(.subheadline)
+                    }
+                }
+                ToolbarItem(placement: .navigationBarLeading) {
+                    Image("logo")
+                        .resizable()
+                        .frame(minWidth: 40, idealWidth: 40, maxWidth: 40, minHeight: 40, idealHeight: 40, maxHeight: 40, alignment: .center)
+                }
+                ToolbarItem(placement: .navigationBarTrailing) {
+                    Button {
+                        
+                    } label: {
+                        Image(systemName: "line.3.horizontal")
                             .foregroundColor(Color("Gold"))
                     }
                 }
@@ -68,7 +108,7 @@ struct GamesView: View {
             .toolbarBackground(Color("Maroon"), for: .tabBar)
             .toolbarBackground(.visible, for: .tabBar)
         }
-
+        
     }
     
     func loadData() async {
@@ -79,8 +119,9 @@ struct GamesView: View {
         var opponent: String = ""
         var score: String = ""
         var starts: String = ""
+        var result: String = ""
         games = []
-        guard let url = URL(string: "https://www.hockeyvictoria.org.au/teams/" + competition + "/&t=" + value) else {
+        guard let url = URL(string: "https://www.hockeyvictoria.org.au/teams/" + myCompID + "/&t=" + myTeamID) else {
             print("Invalid URL")
             return
         }
@@ -117,12 +158,22 @@ struct GamesView: View {
                         score = "BYE"
                     } else {
                         
-                    opponent = String(line[i+2].replacingOccurrences(of: "<", with: ">").split(separator: ">")[2].replacingOccurrences(of: " Hockey Club", with: "").replacingOccurrences(of: " Hockey Association", with: "").replacingOccurrences(of: " Hockey Organisation", with: ""))
-                    score = String(line[i+2].replacingOccurrences(of: "<", with: ">").split(separator: ">")[5])
-                    if score == "div" { score = "" }
+                        opponent = String(line[i+2].replacingOccurrences(of: "<", with: ">").split(separator: ">")[2].replacingOccurrences(of: " Hockey Club", with: "").replacingOccurrences(of: " Hockey Association", with: "").replacingOccurrences(of: " Hockey Organisation", with: ""))
+                        score = String(line[i+2].replacingOccurrences(of: "<div class=\"badge badge-danger\">FF</div>", with: "").replacingOccurrences(of: "<", with: ">").split(separator: ">")[5])
+                        if score == "div" {
+                            score = ""
+                            result = ""
+                        } else {
+                            result = String(line[i+2].replacingOccurrences(of: "<div class=\"badge badge-danger\">FF</div>", with: "").replacingOccurrences(of: "<", with: ">").split(separator: ">")[9])
+                        }
                     }
-                    games.append(Game(id: id, roundID: round, dateTime: dateTime, venue: venue, opponent: opponent, score: score, starts: starts))
+                    games.append(Game(id: id, roundID: round, dateTime: dateTime, venue: venue, opponent: opponent, score: score, starts: starts, result: result))
                     
+                }
+                if line[i].contains("btn btn-outline-primary btn-sm") {
+                    if nextGameDetails == "" && result == "" {
+                        nextGameDetails = String(line[i].split(separator: "\"")[3])
+                    }
                 }
             }
             // more to come

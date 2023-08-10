@@ -14,6 +14,7 @@
 		AFD41AF12A8488D7002C3A72 /* GamesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AFD41AF02A8488D7002C3A72 /* GamesView.swift */; };
 		AFD41AF32A849FC0002C3A72 /* TeamsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AFD41AF22A849FC0002C3A72 /* TeamsView.swift */; };
 		AFD41AF52A84DE73002C3A72 /* LadderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AFD41AF42A84DE73002C3A72 /* LadderView.swift */; };
+		AFE0670B2A8582A600FFFFA4 /* NextGameView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AFE0670A2A8582A600FFFFA4 /* NextGameView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -25,6 +26,7 @@
 		AFD41AF02A8488D7002C3A72 /* GamesView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GamesView.swift; sourceTree = "<group>"; };
 		AFD41AF22A849FC0002C3A72 /* TeamsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TeamsView.swift; sourceTree = "<group>"; };
 		AFD41AF42A84DE73002C3A72 /* LadderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LadderView.swift; sourceTree = "<group>"; };
+		AFE0670A2A8582A600FFFFA4 /* NextGameView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NextGameView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -64,6 +66,7 @@
 				AFD41AF02A8488D7002C3A72 /* GamesView.swift */,
 				AFD41AF22A849FC0002C3A72 /* TeamsView.swift */,
 				AFD41AF42A84DE73002C3A72 /* LadderView.swift */,
+				AFE0670A2A8582A600FFFFA4 /* NextGameView.swift */,
 			);
 			path = MHSOBHC;
 			sourceTree = "<group>";
@@ -151,6 +154,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				AFD41AF12A8488D7002C3A72 /* GamesView.swift in Sources */,
+				AFE0670B2A8582A600FFFFA4 /* NextGameView.swift in Sources */,
 				AFD41AE22A84831A002C3A72 /* ContentView.swift in Sources */,
 				AFD41AF52A84DE73002C3A72 /* LadderView.swift in Sources */,
 				AFD41AE02A84831A002C3A72 /* MHSOBHCApp.swift in Sources */,

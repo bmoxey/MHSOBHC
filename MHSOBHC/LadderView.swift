@@ -42,11 +42,10 @@ struct LadderView: View {
         
         NavigationStack {
             List(ladder, id: \.id) { item in
-                VStack {
                     HStack {
                         Text("\(item.id)")
                         Text(item.teamName)
-                            .fontWeight(.heavy)
+                            .fontWeight(.bold)
                         Spacer()
                     }
                     HStack {
@@ -71,7 +70,6 @@ struct LadderView: View {
                             Text("WR: \(item.winRatio)%")
                         }
                         Spacer()
-                    }
                 }
             }
             .background(Color("Green"))
@@ -83,11 +81,25 @@ struct LadderView: View {
             
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
-                ToolbarItem(placement: .principal) {
+                ToolbarItem(placement: .principal)
+                {
                     VStack {
-                        Text("Game Schedule").font(.headline)
+                        Text("Comp Ladder").font(.headline)
                             .foregroundColor(Color("Gold"))
-                        Text(selSection + " : " + selTeam).font(.subheadline)
+                        Text(myCompName + " : " + myGradeName).font(.subheadline)
+                            .foregroundColor(Color("Gold"))
+                    }
+                }
+                ToolbarItem(placement: .navigationBarLeading) {
+                    Image("logo")
+                        .resizable()
+                        .frame(minWidth: 40, idealWidth: 40, maxWidth: 40, minHeight: 40, idealHeight: 40, maxHeight: 40, alignment: .center)
+                }
+                ToolbarItem(placement: .navigationBarTrailing) {
+                    Button {
+                        
+                    } label: {
+                        Image(systemName: "line.3.horizontal")
                             .foregroundColor(Color("Gold"))
                     }
                 }
@@ -115,7 +127,7 @@ struct LadderView: View {
         var points: Int = 0
         var winRatio: Int = 0
         ladder = []
-        guard let url = URL(string: "https://www.hockeyvictoria.org.au/pointscores/" + competition + "/&d=" + selGrade) else {
+        guard let url = URL(string: "https://www.hockeyvictoria.org.au/pointscores/" + myCompID + "/&d=" + myGradeID) else {
             print("Invalid URL")
             return
         }
@@ -142,8 +154,6 @@ struct LadderView: View {
                     
                 }
             }
-            print(competition)
-            print(selGrade)
         } catch {
             print("Invalid data")
             

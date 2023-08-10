@@ -7,11 +7,12 @@
 
 import SwiftUI
 
-public var competition = "14682"
-public var value = "214624"
-public var selTeam = "Over 45 D East"
-public var selSection = "Vets"
-public var selGrade = "26171"
+public var myCompName = "Vets"
+public var myCompID = "14682"
+public var myGradeName = "Over 45 D East"
+public var myGradeID = "26171"
+public var myTeamID = "214624"
+public var nextGameDetails = ""
 
 struct ContentView: View {
     var body: some View {
@@ -26,9 +27,10 @@ struct ContentView: View {
                     Image("ladderTab1")
                     Text("Ladder")
                 }
-            Text("Hello")
+            NextGameView()
                 .tabItem {
-                    Image(systemName: "house")
+                    Image("groundTab2")
+                    Text("Next Game")
                 }
             TeamsView()
                 .tabItem {
