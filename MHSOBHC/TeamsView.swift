@@ -51,7 +51,7 @@ struct TeamsView: View {
                             }
                             Text(team.name)
                             }
-                            .gesture(TapGesture(count: 2).onEnded({
+                            .gesture(TapGesture(count: 1).onEnded({
                                 myCompID = team.competition
                                 myTeamID = team.teamID
                                 myGradeName = team.name

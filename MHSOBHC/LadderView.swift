@@ -8,10 +8,10 @@
 import SwiftUI
 
 struct Shape: Identifiable {
+    var id = UUID()
     var color: String
     var type: String
     var count: Int
-    var id = UUID()
 }
 
 struct Ladder: Codable {
@@ -34,80 +34,83 @@ struct LadderItem: Codable {
     var winRatio: Int
 }
 
+
 struct LadderView: View {
     @State private var ladder = [LadderItem]()
-    @State var winRat: Int = 0
-    
     var body: some View {
         
-        NavigationStack {
-            List(ladder, id: \.id) { item in
-                    HStack {
-                        Text("\(item.id)")
-                        Text(item.teamName)
-                            .fontWeight(.bold)
-                        Spacer()
-                    }
-                    HStack {
-                        Spacer()
-                        VStack {
-                            Text("Wins: \(item.wins)")
-                            Text("Loss: \(item.losses)")
-                        }
-                        Spacer()
-                        VStack {
-                            Text("Draw: \(item.draws)")
-                            Text("Forf: \(item.forfeits)")
-                        }
-                        Spacer()
-                        VStack {
-                            Text("For: \(item.scoreFor)")
-                            Text("Agst: \(item.scoreAgainst)")
-                        }
-                        Spacer()
-                        VStack {
+        GeometryReader {
+            geometry in
+            NavigationStack {
+                List(ladder, id: \.id) { item in
+                    VStack {
+                        HStack {
+                            Text("\(item.id)")
+                            if item.teamName == "Melbourne High School Old Boys" {
+                                Text("Melbourne High School Old Boys")
+                                    .fontWeight(.bold)
+                                    .foregroundColor(Color("Gold"))
+                            } else {
+                                Text(item.teamName)
+                                    .fontWeight(.bold)
+                            }
+                            Spacer()
                             Text("Pts: \(item.points)")
                             Text("WR: \(item.winRatio)%")
                         }
-                        Spacer()
-                }
-            }
-            .background(Color("Green"))
-            .scrollContentBackground(.hidden)
-            .listStyle(GroupedListStyle())
-            .task {
-                await loadData()
-            }
-            
-            .navigationBarTitleDisplayMode(.inline)
-            .toolbar {
-                ToolbarItem(placement: .principal)
-                {
-                    VStack {
-                        Text("Comp Ladder").font(.headline)
-                            .foregroundColor(Color("Gold"))
-                        Text(myCompName + " : " + myGradeName).font(.subheadline)
-                            .foregroundColor(Color("Gold"))
+                        let spaceSize = geometry.size.width / CGFloat(item.played + 1)
+                        HStack(spacing: 0) {
+                            Text("\(item.wins)")
+                                .frame(width: CGFloat(item.wins)*spaceSize)
+                                .background(.green)
+                            Text("\(item.draws)")
+                                .frame(width: CGFloat(item.draws)*spaceSize)
+                                .background(.gray)
+                            Text("\(item.forfeits)")
+                                .frame(width: CGFloat(item.forfeits)*spaceSize)
+                                .background(.purple)
+                            Text("\(item.losses)")
+                                .frame(width: CGFloat(item.losses)*spaceSize)
+                                .background(.red)
+                        }
                     }
                 }
-                ToolbarItem(placement: .navigationBarLeading) {
-                    Image("logo")
-                        .resizable()
-                        .frame(minWidth: 40, idealWidth: 40, maxWidth: 40, minHeight: 40, idealHeight: 40, maxHeight: 40, alignment: .center)
+                .background(Color("Green"))
+                .scrollContentBackground(.hidden)
+                .listStyle(GroupedListStyle())
+                .task {
+                    await loadData()
                 }
-                ToolbarItem(placement: .navigationBarTrailing) {
-                    Button {
-                        
-                    } label: {
-                        Image(systemName: "line.3.horizontal")
-                            .foregroundColor(Color("Gold"))
+                
+                .navigationBarTitleDisplayMode(.inline)
+                .toolbar {
+                    ToolbarItem(placement: .principal) {
+                        VStack {
+                            Text("Competition Ladder").font(.headline)
+                                .foregroundColor(Color("Gold"))
+                            Text(myCompName + " : " + myGradeName).font(.subheadline)
+                                .foregroundColor(Color("Gold"))
+                        }
+                    }
+                    ToolbarItem(placement: .navigationBarLeading) {
+                        Image("logo")
+                            .resizable()
+                            .frame(minWidth: 40, idealWidth: 40, maxWidth: 40, minHeight: 40, idealHeight: 40, maxHeight: 40, alignment: .center)
+                    }
+                    ToolbarItem(placement: .navigationBarTrailing) {
+                        Button {
+                            
+                        } label: {
+                            Image(systemName: "line.3.horizontal")
+                                .foregroundColor(Color("Gold"))
+                        }
                     }
                 }
+                .toolbarBackground(Color("Maroon"), for: .navigationBar)
+                .toolbarBackground(.visible, for: .navigationBar)
+                .toolbarBackground(Color("Maroon"), for: .tabBar)
+                .toolbarBackground(.visible, for: .tabBar)
             }
-            .toolbarBackground(Color("Maroon"), for: .navigationBar)
-            .toolbarBackground(.visible, for: .navigationBar)
-            .toolbarBackground(Color("Maroon"), for: .tabBar)
-            .toolbarBackground(.visible, for: .tabBar)
         }
         
         
