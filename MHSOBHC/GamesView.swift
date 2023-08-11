@@ -25,6 +25,7 @@ struct Game: Codable {
 struct GamesView: View {
     @State private var games = [Game]()
     
+    
     var body: some View {
         NavigationStack {
             List(games, id: \.id) { item in
@@ -77,7 +78,7 @@ struct GamesView: View {
                 await loadData()
             }
             .navigationBarTitleDisplayMode(.inline)
-
+            
             .toolbar {
                 ToolbarItem(placement: .principal) {
                     VStack {
@@ -120,6 +121,7 @@ struct GamesView: View {
         var score: String = ""
         var starts: String = ""
         var result: String = ""
+        nextGameDetails = ""
         games = []
         guard let url = URL(string: "https://www.hockeyvictoria.org.au/teams/" + myCompID + "/&t=" + myTeamID) else {
             print("Invalid URL")
