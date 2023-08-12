@@ -17,9 +17,8 @@ struct NextGameView: View {
     @State private var venue = ""
     @State private var field = ""
     @State private var isGame: Bool = false
-    let nextGameDetails = "https://www.hockeyvictoria.org.au/game/1334314/"
     
-    @State private var region = MKCoordinateRegion(center: CLLocationCoordinate2D(latitude: -37.824556, longitude: 144.963211), span: MKCoordinateSpan(latitudeDelta: 0.003, longitudeDelta: 0.003))
+    @State private var region = MKCoordinateRegion(center: CLLocationCoordinate2D(latitude: -37.824556, longitude: 144.963211), span: MKCoordinateSpan(latitudeDelta: 0.005, longitudeDelta: 0.005))
     
     var body: some View {
         NavigationStack {
@@ -53,7 +52,7 @@ struct NextGameView: View {
                         .padding(.bottom)
                     
                     
-                        
+                    
                         .navigationBarTitleDisplayMode(.inline)
                     
                         .toolbar {
@@ -122,36 +121,24 @@ struct NextGameView: View {
                         let diffComponents = Calendar.current.dateComponents([.day, .hour, .minute], from: today, to: startDate)
                         let days = diffComponents.day
                         let hrs = diffComponents.hour
+                        let mins = diffComponents.minute
                         if days! > 0 || (days! == 0 && hrs! > 0) {
-                            starts = "Starts in \(days!) days and \(hrs!) hours"
+                            starts = "Starts in \(days!) days, \(hrs!) hours, \(mins!) minutes"
                         } else {
                             starts = ""
                         }
                     }
                     if line[i].contains("Venue") {
                         venue = String(line[i+1].replacingOccurrences(of: "      ", with: "").replacingOccurrences(of: "<div class=\"font-size-sm\">", with: " ").replacingOccurrences(of: "</div>", with: ""))
-                        let geocoder = CLGeocoder()
-                        geocoder.geocodeAddressString(venue, completionHandler: { (placemarks, error) in
-                            if error != nil {
-                                print("Failed to retrieve location")
-                                return
+                        Task  {
+                            do {
+                                try await lookupCoordinates(venue: venue)
                             }
-                            
-                            var location: CLLocation?
-                            
-                            if let placemarks = placemarks, placemarks.count > 0 {
-                                location = placemarks.first?.location
+                            catch {
+                                print(error)
                             }
-                            
-                            if let location = location {
-                                let coordinate = location.coordinate
-                                region = MKCoordinateRegion(center: CLLocationCoordinate2D(latitude: coordinate.latitude, longitude: coordinate.longitude), span: MKCoordinateSpan(latitudeDelta: 0.003, longitudeDelta: 0.003))
-                            }
-                            else
-                            {
-                                print("No Matching Location Found")
-                            }
-                        })
+                        }
+                        
                     }
                     if line[i].contains(">Field<") {
                         field = String(line[i+1].replacingOccurrences(of: "      ", with: ""))
@@ -171,5 +158,25 @@ struct NextGameView: View {
             NextGameView()
         }
     }
+    
+    func getCoordinate(from address: String) async throws -> CLLocationCoordinate2D {
+        let geocoder = CLGeocoder()
+
+        guard let location = try await geocoder.geocodeAddressString(address)
+            .compactMap( { $0.location } )
+            .first(where: { $0.horizontalAccuracy >= 0 } )
+        else {
+            throw CLError(.geocodeFoundNoResult)
+        }
+
+        return location.coordinate
+    }
+    
+    func lookupCoordinates(venue: String) async throws {
+        let coordinate = try await getCoordinate(from: venue)
+        region = MKCoordinateRegion(center: CLLocationCoordinate2D(latitude: coordinate.latitude, longitude: coordinate.longitude), span: MKCoordinateSpan(latitudeDelta: 0.005, longitudeDelta: 0.005))
+    }
+    
+    
 }
 

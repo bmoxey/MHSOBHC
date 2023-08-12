@@ -59,12 +59,22 @@ struct TeamsView: View {
                                 myGradeID = team.grade
                                 myComp = myCompID
                                 myValue = myTeamID
+                                Task  {
+                                    do {
+                                        let _ = try await loadData()
+                                    }
+                                    catch {
+                                        print(error)
+                                    }
+                                }
+                                
                             }))
                         }
                     }
                 }
             }
-            .listStyle(GroupedListStyle())    .navigationBarTitleDisplayMode(.inline)
+            .listStyle(GroupedListStyle())
+            .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .principal) {
                     VStack {
@@ -96,8 +106,41 @@ struct TeamsView: View {
         }
 
     }
-    
-
+    func loadData() async throws -> String {
+        var score: String = ""
+        var result: String = ""
+        nextGameDetails = ""
+        guard let url = URL(string: "https://www.hockeyvictoria.org.au/teams/" + myCompID + "/&t=" + myTeamID) else {
+            return("Invalid URL")
+        }
+        
+        do {
+            let html = try String.init(contentsOf: url)
+            let line = html.split(whereSeparator: \.isNewline)
+            for i in 0 ..< line.count {
+                if line[i].contains("col-lg-3 pb-3 pb-lg-0 text-center") {
+                        
+                    score = String(line[i+2].replacingOccurrences(of: "<div class=\"badge badge-danger\">FF</div>", with: "").replacingOccurrences(of: "<", with: ">").split(separator: ">")[5])
+                    if score == "div" {
+                        score = ""
+                        result = ""
+                    } else {
+                        result = String(line[i+2].replacingOccurrences(of: "<div class=\"badge badge-danger\">FF</div>", with: "").replacingOccurrences(of: "<", with: ">").split(separator: ">")[9])
+                    }
+                    
+                }
+                if line[i].contains("btn btn-outline-primary btn-sm") {
+                    if nextGameDetails == "" && result == "" {
+                        nextGameDetails = String(line[i].split(separator: "\"")[3])
+                    }
+                }
+            }
+            // more to come
+        } catch {
+            return("Invalid data")
+        }
+        return("")
+    }
 
 }
 
